@@ -1,0 +1,827 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang11274{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang10\f0\fs22{\field{\*\fldinst{HYPERLINK "http://foro.elhacker.net/scripting/programacion_batch_avanzada_nuevo-t132924.0.html"}}{\fldrslt{\ul\cf1 http://foro.elhacker.net/scripting/programacion_batch_avanzada_nuevo-t132924.0.html}}}\f0\fs22\par
+Programaci\'f3n BATCH Avanzada.\par
+\par
+Temario.\par
+1.- Variables y Argumentos.\par
+2.- Imprimir caracteres de comandos.\par
+3.- Algunas otras variables de Entorno.\par
+4.- IF\par
+5.- FOR\par
+6.- Funciones\par
+7.- Includes\par
+8.- Misc\par
+9.- EOF\par
+\par
+Variables y Argumentos\par
+\par
+El manejo de variables en batch, es muy flexible., y este nos permite hacer desde operaciones matem\'e1ticas, hasta seleccionar ciertas partes de una variable, asi como reemplazar  cadenas de texto, y obtener archivos.. y sus propiedades, la fecha, hora, generar numeros aleatorios, entre otros.\par
+\par
+Los argumentos que recibe un batch, son recibidos de la siguiente forma:\par
+\par
+batch argumento1 dos tres\par
+\par
+hara que:\par
+%0 = batch\par
+%1 = argumento1\par
+%2 = dos\par
+%3 = tres\par
+\par
+en %0 se guardara, el nombre del archivo.\par
+\par
+Podemos borrar el contenido de un parametro con el comando shift:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo %0 %1 %2 %3\par
+shift /1\par
+echo %0 %1 %2 %3\par
+ \par
+\par
+al llamar:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring 123 456 789\par
+astring 123 456 789\par
+astring 456 789\par
+ \par
+\par
+shift borro, el primer argumento.\par
+\par
+Tambien contamos con los siguientes modificadores para los archivos:\par
+\par
+C\'f3digo\par
+       %~f1        - regresa la ruta y el archivo de %1.\par
+       %~d1        - regresa la letra de la unidad de %1.\par
+       %~p1        - regresa solo la ruta del archivo %1.\par
+       %~n1        - regresa solo el nombre de archivo %1.\par
+       %~x1        - regresa solo la extension del archivo %1.\par
+       %~s1        - regresa solo la ruta, con directorios, con nombres cortos del archivo %1.\par
+       %~a1        - regresa los atributos del archivo.\par
+       %~t1        - regresa la hora/fecha del archivo %1\par
+       %~z1        - regresa el tama\'f1o del archivo %1.\par
+ \par
+\par
+por ejemplo:\par
+\par
+en un directorio donde tenemos:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>dir\par
+ El volumen de la unidad C no tiene etiqueta.\par
+ El n\'famero de serie del volumen es: A057-553B\par
+ \par
+ Directorio de C:\\Documents and Settings\\Administrador\\tempcurso\par
+ \par
+24/07/2006  12:25a      <DIR>          .\par
+24/07/2006  12:25a      <DIR>          ..\par
+24/07/2006  12:25a                   6 archivo.txt\par
+               1 archivos              6 bytes\par
+               2 dirs  401,715,161,088 bytes libres\par
+ \par
+\par
+este batch:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo Ruta al archivo: %~f1\par
+echo Disco: %~d1\par
+echo Solo ruta: %~p1\par
+echo Nombre: %~n1\par
+echo Extension: %~x1\par
+echo Ruta Corta: %~s1\par
+echo Atributos: %~a1\par
+echo Fecha: %~t1\par
+echo Tama\'f1o: %~z1\par
+ \par
+\par
+llamandolo analiza.bat, saca el siguiente resultado:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>analiza archivo.txt\par
+Ruta al archivo: C:\\Documents and Settings\\Administrador\\tempcurso\\archivo.txt\par
+Disco: C:\par
+Solo ruta: \\Documents and Settings\\Administrador\\tempcurso\\\par
+Nombre: archivo\par
+Extension: .txt\par
+Ruta Corta: C:\\DOCUME~1\\ADMINI~1\\TEMPCU~1\\archivo.txt\par
+Atributos: --a------\par
+Fecha: 24/07/06 12:25a\par
+Tama\'b1o: 6\par
+ \par
+\par
+Tambien podemos usar varias propiedades, por ejemplo, este codigo:\par
+C\'f3digo\par
+@echo off\par
+ \par
+echo %~anxt1\par
+ \par
+\par
+saca este resultado:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>analiza archivo.txt\par
+--a------ 24/07/06 12:25a archivo.txt\par
+ \par
+\par
+Si lo que recibimos no es un archivo, sino una cadena de texto, que contiene mas de una palabra, se debe poner entre comillas, algo asi:\par
+\par
+astring "parametro de varias letras" \par
+\par
+al obtenerlo, en %1, lo recibimos con comillas, pero si usamos:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo Con Comillas: %1\par
+echo Sin Comillas: %~1\par
+ \par
+\par
+saca este resultado:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring "parametro de varias letras"\par
+Con Comillas: "parametro de varias letras"\par
+Sin Comillas: parametro de varias letras\par
+ \par
+\par
+Y por ejemplo, si queremos obtener todos los argumentos, se usa:\par
+\par
+%*\par
+\par
+es decir:\par
+\par
+C\'f3digo\par
+@echo off\par
+ \par
+echo Argumentos: %*\par
+ \par
+\par
+al ejecutar:\par
+\par
+astring parametro de varias letras\par
+\par
+nos regresa:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring parametro de varias letras\par
+Argumentos: parametro de varias letras\par
+\par
+Para asignar a una variable, el valor de algo escrito por el usuario, puedes usar:\par
+\par
+set /P variable=\par
+\par
+por ejemplo:\par
+C\'f3digo\par
+@echo off\par
+echo \'bfComo te llamas?\par
+set /P miva=\par
+ \par
+echo Tu te llamas %miva%\par
+ \par
+\par
+hara algo asi:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring\par
+&#9488;Como te llamas?\par
+Juan\par
+Tu te llamas Juan\par
+ \par
+\par
+Ahora, si por ejemplo, queremos, hacer algo como, obtener las ultimas 3 letras del nombre:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo Escribe tu Nombre\par
+set /P NOM=\par
+echo %NOM:~-3%\par
+ \par
+\par
+Aqui lo que estamos haciendo en la ultima linea:\par
+\par
+%NOM:~-3%\par
+hara, obtener los ultimos 3 caracteres, como si se tratara de la funcion substring.\par
+\par
+por ejemplo, esto:\par
+\par
+%NOM:~1,3%\par
+\par
+obtendra del segundo al cuarto caracter. (empiezas desde 0, recuerda)\par
+\par
+Para reemplazar cadenas, dentro de otra variable, es la siguiente sintaxis:\par
+C\'f3digo\par
+@echo off\par
+echo Escribe una frase\par
+set /P FRA=\par
+echo %FRA:e=XXX%\par
+\par
+esto reemplazara las letras "e" por "XXX".\par
+\par
+Para hacer calculos matematicos, se usa el modificado /A, de esta forma:\par
+\par
+C\'f3digo\par
+@echo off\par
+set /A x=1\par
+echo %x%\par
+set /A x=x*9\par
+echo %x%\par
+ \par
+\par
+tenemos las siguientes operaciones disponibles:\par
+\par
+C\'f3digo\par
+()                  - agrupar\par
+* / %               - operadores aritm\'e9ticos\par
++ -                 - operadores aritm\'e9ticos\par
+<< >>               - may\'fas l\'f3gica\par
+&                   - AND\par
+^                   - XOR\par
+|                   - OR\par
+= *= /= %= += -=    - asignaci\'f3n\par
+  &= ^= |= <<= >>=\par
+,                   - separador de expresi\'f3n\par
+ \par
+\par
+Con este podemos usar numeros hexadecimales de la siguiente forma:\par
+\par
+C\'f3digo\par
+@echo off\par
+set /A x=2\par
+echo %x%\par
+set /A x=x*0xff\par
+echo %x%\par
+\par
+al colocar 0x estamos especificando, que a continuacion se pondra un valor hexadecimal.\par
+\par
+\par
+Imprimir caracteres sin usar comandos\par
+\par
+Ahora, se preguntaran, en las variabes, siempre usamos los signos %\par
+Como imprimes uno?\par
+\par
+veamos:\par
+\par
+C\'f3digo\par
+@echo off\par
+set x=pru\par
+set pru=HOLA\par
+ \par
+:: Esto imprimira el contenido de x\par
+echo %x%\par
+ \par
+::Esto imprimira la letra x\par
+echo x\par
+ \par
+::Esto imprimira %x%\par
+echo %%x%%\par
+ \par
+::Esto imprimira el valor de x entre %%\par
+echo %%%x%%%\par
+ \par
+:: Lo mismo\par
+echo %pru%\par
+echo %%pru%%\par
+echo %%%pru%%%\par
+ \par
+\par
+En resumen, si quieren imprimir, el caracter %, deben colocarlo 2 veces.\par
+\par
+Para otros caracteres, que ejecutan alguna accion en batch como:\par
+&\par
+|\par
+<\par
+>\par
+\par
+debes colocar este caracter antes:^\par
+\par
+por ejemplo:\par
+\par
+C\'f3digo\par
+echo <html><h1>Hola</h1></html> >index.html\par
+ \par
+\par
+no funcionara, pero:\par
+\par
+C\'f3digo\par
+echo ^<html^>^<h1^>Hola^</h1^>^</html^> >index.html\par
+ \par
+\par
+dara:\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>type index.html\par
+<html><h1>Hola</h1></html>\par
+ \par
+\par
+\par
+Algunas otras variables de entorno\par
+\par
+Tenemos otras variables de entorno que podrian servir, ademas de las comunes de ALLUSERSPROFILE y HOMEPATH, por ejemplo:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo Directorio Actual: %CD%\par
+echo Fecha: %DATE%\par
+echo Hora: %TIME%\par
+echo Numero Aleatorio: %RANDOM%\par
+ \par
+dara como resultado:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring\par
+Directorio Actual: C:\\Documents and Settings\\Administrador\\tempcurso\par
+Fecha: Lun 24/07/2006\par
+Hora:  2:13:49.33\par
+Numero Aleatorio: 24523\par
+ \par
+C:\\Documents and Settings\\Administrador\\tempcurso>astring\par
+Directorio Actual: C:\\Documents and Settings\\Administrador\\tempcurso\par
+Fecha: Lun 24/07/2006\par
+Hora:  2:13:51.60\par
+Numero Aleatorio: 3681\par
+ \par
+\par
+Otras instrucciones muy utiles, serian POPD y PUSHD, que sirven para guardar y regresar al directorio actual, por ejemplo:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo %CD%\par
+PUSHD \\\par
+echo %CD%\par
+POPD\par
+echo %CD%\par
+ \par
+\par
+PUSHD funciona de la siguiente manera:\par
+\par
+Guarda el directorio actual., y va a la ruta especificada.\par
+\par
+POPD regresa al directorio guardado por PUSHD\par
+\par
+podemos usarlos uno dentro de otro, asi:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo %CD%\par
+PUSHD \\\par
+echo %CD%\par
+PUSHD %homepath%\par
+echo %CD%\par
+POPD\par
+echo %CD%\par
+POPD\par
+echo %CD%\par
+ \par
+\par
+\par
+IF\par
+\par
+If, reconoce varias situaciones:\par
+\par
+valores de error\par
+comparar cadenas\par
+existencia de archivos\par
+comparaciones matematicas\par
+\par
+como ya sabemos %ERRORLEVEL% almacena algunos valores de otras funciones.\par
+\par
+al hacer\par
+\par
+IF ERRORLEVEL 1 @echo ok ELSE @echo no\par
+\par
+estariamos preguntando si ERRORLEVEL es 1, si lo es imprime OK, si no, imprime NO.\par
+\par
+tambien podemos comparar cadenas, por ejemplo:\par
+\par
+C\'f3digo\par
+@echo off\par
+IF "%~1"=="hola" echo hola\par
+ \par
+\par
+usamos %~1 para que aunque el usuario ponga comillas, no salga error ;)\par
+\par
+C\'f3digo\par
+@echo off\par
+IF /I "%~1"=="hola" echo hola\par
+ \par
+\par
+este codigo, solo responde si dices hola CON minusculas. /I es para hacer mas estricta la comparacion.\par
+\par
+ahora, podemos usar IF en varias lineas:\par
+\par
+C\'f3digo\par
+@echo off\par
+IF EXIST %~snx1 (\par
+echo EXISTE!\par
+) ELSE (\par
+echo NO EXISTE\par
+)\par
+ \par
+\par
+con parentesis ().\par
+\par
+si vamos a usar comparaciones numericas, debemos usar los siguientes codigos de comparaci\'f3n:\par
+\par
+C\'f3digo\par
+ \par
+    EQU - igual\par
+    NEQ - no igual\par
+    LSS - menor que\par
+    LEQ - menor que o igual\par
+    GTR - mayor que\par
+    GEQ - mayor que o igual\par
+ \par
+ \par
+\par
+por ejemplo:\par
+\par
+C\'f3digo\par
+@echo off\par
+echo Cual es tu edad?\par
+SET /P m=\par
+IF %m% GEQ 18 (\par
+echo ERES MAYOR DE EDAD\par
+) ELSE (\par
+echo NO ERES MAYOR DE EDAD\par
+)\par
+ \par
+\par
+que regresa:\par
+\par
+C\'f3digo\par
+C:\\Documents and Settings\\Administrador\\tempcurso>acon\par
+Cual es tu edad?\par
+19\par
+ERES MAYOR DE EDAD\par
+ \par
+C:\\Documents and Settings\\Administrador\\tempcurso>acon\par
+Cual es tu edad?\par
+17\par
+NO ERES MAYOR DE EDAD\par
+ \par
+\par
+Tambien podemos saber si una variable ya fue definida:\par
+\par
+C\'f3digo\par
+IF DEFINED var (\par
+echo SI\par
+) ELSE (\par
+echo NO\par
+)\par
+ \par
+\par
+\par
+FOR\par
+\par
+FOR es una herramienta muy completa, nos permite analizar segmentos de la salida de comandos, funciones y el contenido de archivos.\par
+\par
+Tambien permite hacer bucles de la siguiente manera:\par
+\par
+C\'f3digo\par
+FOR /L %%var IN (inicio,incremento,fin) DO (acciones)\par
+\par
+inicio, es el valor inicial, incremento es la cantidad a sumar, y fin es la cantidad a detenerse, por ejemplo:\par
+\par
+C\'f3digo\par
+FOR /L %%i IN (0,1,10) DO (echo %%i)\par
+imprimira 0 1 2 3 4 5 6 7 8 9 10\par
+\par
+sinembargo, la forma mas sencilla de usar FOR, es para numerar archivos, y hacer algo con ellos.. por ejemplo:\par
+\par
+C\'f3digo\par
+FOR %%x in (x*) DO echo %%x\par
+mostrar\'e1 todos los archivos que empiezan con x.\par
+\par
+para SOLO mostrar directorios:\par
+C\'f3digo\par
+FOR /D %%x in (m*) DO echo %%x\par
+el modificador "/D", mostrar\'e1 solo los directorios, que empiesen con m.\par
+\par
+El comando se puede hacer "recursivo", es decir, que se ejecute  dentro de cada directorio, con el comando "/R", por ejemplo, en una estructura de directorios como la siguiente:\par
+\par
+C\'f3digo\par
+&#9500;&#9472;&#9472;&#9472;adios\par
+&#9474;   &#9492;&#9472;&#9472;&#9472;algo\par
+&#9474;       &#9492;&#9472;&#9472;&#9472;xx\par
+&#9492;&#9472;&#9472;&#9472;hola\par
+ \par
+\par
+al ejecutar el comando:\par
+C\'f3digo\par
+FOR /R /D %%x in (a*) DO echo %%x\par
+C:\\adios\par
+C:\\adios\\algo\par
+\par
+sinembargo, al ejecutar el comando..\par
+C\'f3digo\par
+FOR /R %%x in (*x*) DO echo %%x\par
+C:\\ax.txt\par
+C:\\adios\\sx.txt\par
+C:\\adios\\wwx.txt\par
+C:\\adios\\algo\\kkx.txt\par
+C:\\adios\\algo\\xx\\xx.txt\par
+C:\\hola\\ax.txt\par
+C:\\hola\\rx.txt\par
+\par
+nos mostrara todos los archivos que coinciden con la sequencia especificada, incluso podriamos hacer un buscador en batch, con el uso de FINDSTR y FOR.\par
+\par
+Tenemos otro modificador, /F que nos permite usar ciertas opciones para separar el resulado de las acciones.. comandos, cadenas, o archivos. Su sintaxis es la siguiente:\par
+\par
+C\'f3digo\par
+FOR /F ["opciones"] %var IN (conjunto) DO (acciones)\par
+\par
+conjunto puede ser:\par
+conjunto de archivos -> sin comillas\par
+cadena de caracteres -> con comillas dobles (" ")\par
+comando -> con comilla simple (' ')\par
+\par
+las opciones son las siguientes:\par
+eol -> todo lo que este despues de este caracter sera ignorado (para cada linea)\par
+skip -> numero de lineas a saltarse al principio del archivo/comando.\par
+delims -> esto sirve para separar las strings.. si no se coloca esta opcion, se usaran como separadores "espacio" y "tab"\par
+tokens -> esto es para especificar cuales segementos, delimitados por "delims", seran pasados a las variables.. por ejemplo:\par
+1,2,3\par
+solo pasara los primeros 3 segmentos.\par
+1,2*\par
+pasara 2 segmentos, el primero y todo lo que este despues (el * regresa todo el resto de la linea)\par
+1,2-6,8,9*\par
+regresara 4 segmentos, el primero, desde el segundo hasta el sexto, el octavo y el resto de la linea, despues del noveno, el signo de menos (-) genera intervalos.\par
+\par
+por ultimo, esta la opcion:\par
+usebackq -> que cambia la forma de interpretar si es string o comando, de la siguiente manera:\par
+'cadena'\par
+`comando`\par
+\par
+Nota: [`] es diferente al caracter de acento [\'b4]\par
+\par
+por ejemplo, el siguiente comando:\par
+\par
+C\'f3digo\par
+FOR /F "tokens=1,3-5,7-9,10* delims= " %%i IN ("George no es malvado, es bondadoso, siempre piensa en los demas.") DO echo %%i %%j %%k %%l tonto, %%m %%n %%o matar a %%p %%q\par
+\par
+dara de resultado:\par
+C\'f3digo\par
+George es malvado, es tonto, siempre piensa en matar a los demas.\par
+\par
+\par
+Funciones\par
+\par
+El uso de argumentos, de etiquetas y de filtros nos ayuda mucho al momento de escribir un codigo.\par
+\par
+Muchos creen que las etiquetas solo sirven para los goto.. sinembargo una etiqueta puede servir de funcion y recibir parametros.\par
+\par
+miren, el siguiente programa:\par
+C\'f3digo\par
+@echo off\par
+call:funcion 1 2 3\par
+call:funcion %*\par
+goto:EOF\par
+:funcion\par
+echo Estoy en: %~nx0-^>%0 %*\par
+\par
+al ser llamado, por ejemplo en:\par
+C\'f3digo\par
+C:\\>ejemplo\par
+Estoy en: ejemplo.bat->:funcion 1 2 3\par
+Estoy en: ejemplo.bat->:funcion\par
+el primero muestra los parametros enviados por el batch (1 2 3), y el segundo los parametros enviados al programa.\par
+en este otro ejemplo:\par
+C\'f3digo\par
+C:\\>ejemplo HOLA MUNDO\par
+Estoy en: ejemplo.bat->:funcion 1 2 3\par
+Estoy en: ejemplo.bat->:funcion HOLA MUNDO\par
+la funcion obtiene tambien los argumentos del programa.\par
+\par
+hasta ahora.. todo es igual a usar goto a excepcion del uso de argumentos, sinembargo.. si queremos hacer un.. "return", se hace usando:\par
+goto:EOF\par
+entonces, en situaciones como:\par
+C\'f3digo\par
+@echo off&call:main&goto:EOF\par
+ \par
+:suma\par
+set /A res=%1 + %2\par
+echo %res%\par
+goto:EOF\par
+ \par
+:resta\par
+set /A res=%1 - %2\par
+echo %res%\par
+goto:EOF\par
+ \par
+:multiplica\par
+set /A res=%1 * %2\par
+echo %res%\par
+goto:EOF\par
+ \par
+:main\par
+set /P arg=Escribe 2 numeros separados por un espacio \par
+echo %arg%\par
+echo su suma es:\par
+call:suma %arg%\par
+ \par
+echo su resta es:\par
+call:resta %arg%\par
+ \par
+echo su producto es:\par
+call:multiplica %arg%\par
+ \par
+goto:EOF\par
+ \par
+\par
+como podemos ver goto:EOF se usa para regresar al orden de comandos.\par
+\par
+el resultado es algo asi:\par
+\par
+C\'f3digo\par
+C:\\>operaciones\par
+Escribe 2 numeros separados por un espacio 6 2\par
+6 2\par
+su suma es:\par
+8\par
+su resta es:\par
+4\par
+su producto es:\par
+12\par
+ \par
+\par
+\par
+Includes\par
+Para hacer un "include" oincluir un archivo, solo debes llamarlo asi:\par
+archivo_a_incluir.bat funcion argumentos\par
+y en el archivo a incluir, debe de estar al principio: @echo off&call:%*&goto:EOF\par
+\par
+queda algo asi:\par
+C\'f3digo\par
+@echo off&call:%*&goto:EOF\par
+:funcion1\par
+...\par
+:funcion2\par
+...\par
+ \par
+\par
+por ejemplo:\par
+\par
+--inclu.bat--\par
+C\'f3digo\par
+@echo off&call:%*&goto:EOF\par
+ \par
+:cabeza\par
+echo ###############\par
+echo # Hecho por:  #\par
+echo # sirdarckcat #\par
+echo ###############\par
+goto:EOF\par
+ \par
+:uso\par
+echo uso:\par
+echo %~nx0 Nombre\par
+goto:EOF\par
+ \par
+:nombre\par
+echo Hola %*\par
+goto:EOF\par
+ \par
+\par
+--inicio.bat--\par
+C\'f3digo\par
+@echo off\par
+if "%~1"=="" (\par
+inclu.bat cabeza\par
+inclu.bat uso\par
+) else (\par
+inclu.bat nombre %~1\par
+)\par
+ \par
+\par
+esto daria este resultado:\par
+\par
+C\'f3digo\par
+C:\\>inicio\par
+###############\par
+# Hecho por:  #\par
+# sirdarckcat #\par
+###############\par
+uso:\par
+inclu.bat Nombre\par
+ \par
+C:\\>inicio sirdarckcat\par
+Hola sirdarckcat\par
+ \par
+C:\\>\par
+ \par
+\par
+\par
+Misc\par
+Algunos filtros y comandos interesantes:\par
+\par
+comando | more\par
+muestra el resultado del comando de forma paginada\par
+\par
+comando | sort\par
+muestra el resultado del comando de forma ordenada\par
+\par
+TITLE "algo"\par
+cambia el titulo de la ventana de CMD\par
+\par
+SUBST ruta/a/alguna/carpeta [letra_unidad]\par
+asgina a letra_unidad la ruta de acceso\par
+\par
+FIND "cadena"\par
+busca cierta cadena en un archivo (se puede usar como filtro), con el modificador /v encuentra solo las que NO tienen la linea especificada. (para mas info, escribe en CMD: FIND /?)\par
+\par
+FINDSTR\par
+extension de FIND, acepta expresiones regulares, y busqueda general (lo mas parecido que DOS tiene a grep), descripci\'f3n detallada:\par
+C\'f3digo\par
+Busca cadenas en los archivos.\par
+ \par
+FINDSTR [/B] [/E] [/L] [/R] [/S] [/I] [/X] [/V] [/N] [/M] [/O] [/P]\par
+[/F:archivo]\par
+   [/C:cadena] [/G:archivo] [/D:lista de directorios] [/A:atributos de color]\par
+   [cadenas] [[unidad:][ruta]nombredearchivo[ ...]]\par
+ \par
+  /B        Hace coincidir los modelos si est\'e1n al principio de la l\'ednea.\par
+  /E        Hace coincidir los modelos si est\'e1n al final de la l\'ednea.\par
+  /L        Literalmente utiliza cadenas de b\'fasqueda.\par
+  /R        Utiliza cadenas sde b\'fasqueda como expresiones regulares.\par
+  /S        Busca archivos que coinciden en el directorio actual y en todos\par
+            los subdirectorios.\par
+  /I        Especifica que la b\'fasqueda no distingue may\'fasculas de min\'fasculas.\par
+  /X        Imprime l\'edneas que coinciden con exactitud.\par
+  /V        S\'f3lo imprime l\'edneas que no contienen una correspondencia.\par
+  /N        Imprime el n\'famero de la l\'ednea antes de la l\'ednea que coincide.\par
+  /M        S\'f3lo imprime el nombre de archivo si el archivo contiene una\par
+            correspondencia.\par
+  /O        Imprime un car\'e1cter de desplazamiento antes de las l\'edneas que\par
+            coinciden.\par
+  /P        Omite archivos con caracteres que no son imprimibles\par
+  /A:attr   Especifica atributos de color con dos d\'edgitos hexadecimales. Ver\par
+            "color /?"\par
+  /F:archivo  Lee la lista de archivos desde el archivo especificado\par
+            (/ significa consola).\par
+  /C:cadena   Utiliza una cadena especificada como una b\'fasqueda de cadena\par
+            literal.\par
+  /G:archivo  Coje la b\'fasqueda de archivos desde el archivo especificado\par
+            (/ significa consola).\par
+  /D:dir    Busca un signo de punto y coma de la lista delimitada de\par
+            directorios\par
+  cadenas   Texto que se debe buscar.\par
+  [unidad:][ruta]nombredearchivo\par
+            Especifica un archivo o  archivos que buscar.\par
+ \par
+Utiliza espacios para separar m\'faltiples cadenas de b\'fasqueda a no ser que\par
+el argumento lleve un prefijo con /C.  Por ejemplo, 'FINDSTR "qu\'e9 tal" x.y'\par
+busca "qu\'e9" o "tal" en el archivo x.y.  'FINDSTR /C:"qu\'e9 tal" x.y' busca\par
+"qu\'e9 tal" en el archivo x.y.\par
+ \par
+Expresi\'f3n regular de referencia r\'e1pida:\par
+  .        Comod\'edn: cualquier car\'e1cter\par
+  *        Repetir: cero o m\'e1s ocurrencias de un car\'e1cter previo o de clase\par
+  ^        Posici\'f3n de l\'ednea: comienzo de la l\'ednea\par
+  $        Posici\'f3n de l\'ednea: fin de l\'ednea\par
+  [clase]  Clase de car\'e1cter: cualquier car\'e1cter en la serie\par
+  [^class] Clase inversa: cualquier car\'e1cter que no est\'e9 en la serie\par
+  [x-y]    Intervalo: cualquier car\'e1cter que est\'e9 dentro del intervalo\par
+           especificado\par
+  \\x       Escape: uso literal de un metacar\'e1cter x\par
+  \\<xyz    Posici\'f3n de palabra: principio de palabra\par
+  xyz\\>    Posici\'f3n de palabra: fin de palabra\par
+ \par
+Para obtener una informaci\'f3n m\'e1s completa sobre expresiones regulares de\par
+FINDSTR referirse al Comando de referencia Command en l\'ednea.\par
+ \par
+ \par
+\par
+start "titulo ventana nueva" [OPCIONES] comando argumentos\par
+START tiene mas opciones de las que son usadas comunmente.\par
+"titulo ventana nueva" especifica el titulo de la ventana que se generar\'e1.\par
+\par
+las opciones entre otros contienen:\par
+/Druta - el programa inicia en el directorio..\par
+/B - la aplicaci\'f3n se inicia sin ventana\par
+/I - se inicia la aplicacion con el entorno original, es decir las modificaciones al entrono hechas en esta sesion, no afectaran el nuevo programa\par
+/MIN - La nueva ventana se inicia minimisada\par
+/MAX - La nueva ventana se inicia maximisada\par
+/SEPARATE - El programa se inicia en una zona de memoria separada\par
+/SHARED - El programa se inicia en una zona de memoria compartida\par
+\par
+Iniciar en prioridades:\par
+\par
+/LOW - baja\par
+/NORMAL - normal\par
+/HIGH - alta\par
+/REALTIME - tiempo real\par
+/ABOVENORMAL - sobre lo normal\par
+/BELOWNORMAL - debajo de lo normal\par
+\par
+/WAIT - Inicia el programa, y espera hasta que termine de ejecutarse\par
+\par
+por ejemplo, si quieren abrir un programa sin generar una ventana, por ejemplo netcat, podrian hacer algo asi:\par
+\par
+start /B /SEPARATE /HIGH /I /D %WINDIR% nc -L -p 1337 |exit\par
+\par
+que lo inicia en una zona de memoria separada, con prioridad alta, en el contexto original, y en %windir%\par
+\par
+EOF\par
+EOF es una etiqueta que define el fin del archivo, sirve para terminar funciones, y en este caso, solo sirve para terminar el documento :), espero les sirva ;)\par
+}
+ 
