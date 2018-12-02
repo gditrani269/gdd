@@ -1,0 +1,126 @@
+version de ubuntu
+lsb_release -a
+
+Ubuntu 18.04.1 LTS
+
+----------------------------------------------------------
+Instalacion de telenet server Ubuntu 18.04.1 LTS
+
+https://yuncloud.ddns.net/wordpress/blog/2018/09/09/install-and-enable-telnet-server-in-ubuntu-18-04-lts/
+1 - sudo apt  install  update-inetd
+2 - sudo apt install xinetd telnetd
+3 - sudo nano  /etc/xinetd.d/telnet    y le agrego:
+# default: on
+# description: The telnet server serves telnet sessions; it uses
+# unencrypted username/password pairs for authentication.
+service telnet
+{
+disable = no
+flags = REUSE
+socket_type = stream
+wait = no
+user = root
+server = /usr/sbin/in.telnetd
+log_on_failure += USERID
+}
+
+4 - sudo /etc/init.d/xinetd restart
+
+5 - sudo update-rc.d xinetd defaults
+
+6 - Para verificar: ss -tnlp
+
+en la instalacion ubuntu me pude conectar desde afuera, 
+en la instalacion de la virtual de gitlab (bitnami) tuve que bajar el firewall
+para conectarme desde afuera 
+
+sudo ufw disable # To disable the firewall
+
+sudo ufw enable # To enable the firewall
+
+----------------------------------------------------------
+
+Ejemplos itable:
+https://www.linux-party.com/57-seguridad/7980-20-ejemplos-iptables-para-administradores-de-sistemas-linux
+
+----------------------------------------------------------
+Administracion de red
+Instalar:  sudo apt install nmap
+
+muestra las conecciones habilitadas para localost
+sudo nmap localhost
+PORT     STATE SERVICE
+22/tcp   open  ssh
+23/tcp   open  telnet
+25/tcp   open  smtp
+80/tcp   open  http
+631/tcp  open  ipp
+8080/tcp open  http-proxy
+8082/tcp open  blackice-alerts
+9090/tcp open  zeus-admin
+9100/tcp open  jetdirect
+
+ 
+muestra las conecciones para la IP (por ejemplo 192.168.205.129)
+sudo nmap 192.168.205.132
+PORT   STATE SERVICE
+22/tcp open  ssh
+23/tcp open  telnet
+25/tcp open  smtp
+80/tcp open  http
+
+sudo netstat -tulpn
+
+iptables -nvL --line-numbers
+
+
+----------------------------------------------------------
+version de gitlab
+sudo gitlab-rake gitlab:env:info
+
+curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
+sudo apt-get install gitlab-runner
+
+------------------------------
+
+ sudo wget -O /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64
+ sudo chmod +x /usr/local/bin/gitlab-runner
+ 
+ sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
+ sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+ sudo gitlab-runner start
+ 
+ 
+ Run the following command:
+
+ sudo gitlab-runner register
+
+Enter your GitLab instance URL:
+
+ Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com )
+ https://gitlab.com
+
+Enter the token you obtained to register the Runner:
+
+ Please enter the gitlab-ci token for this runner
+ xxx
+
+Enter a description for the Runner, you can change this later in GitLab’s UI:
+
+ Please enter the gitlab-ci description for this runner
+ [hostame] my-runner
+
+Enter the tags associated with the Runner, you can change this later in GitLab’s UI:
+
+ Please enter the gitlab-ci tags for this runner (comma separated):
+ my-tag,another-tag
+
+Enter the Runner executor:
+
+ Please enter the executor: ssh, docker+machine, docker-ssh+machine, kubernetes, docker, parallels, virtualbox, docker-ssh, shell:
+ docker
+
+If you chose Docker as your executor, you’ll be asked for the default image to be used for projects that do not define one in .gitlab-ci.yml:
+
+ Please enter the Docker image (eg. ruby:2.1):
+ alpine:latest
